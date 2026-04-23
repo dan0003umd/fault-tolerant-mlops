@@ -1,0 +1,84 @@
+{
+  "zsl": {
+    "method": "Zero-Shot Learning (MLP Embeddings)",
+    "accuracy": 0.6410256410256411,
+    "fault_fpr": 0.05405405405405406,
+    "unseen_detection_rate": 0.9615384615384616,
+    "per_class": {
+      "UNSEEN": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "error_spike": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 12
+      },
+      "intermittent": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 13
+      },
+      "memory_leak": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 13
+      },
+      "normal": {
+        "precision": 0.9722222222222222,
+        "recall": 0.9459459459459459,
+        "f1": 0.958904109589041,
+        "support": 37
+      },
+      "slow": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 3
+      }
+    }
+  },
+  "baseline": {
+    "method": "Threshold Baseline",
+    "accuracy": 0.6666666666666666,
+    "fault_fpr": 0.0,
+    "unseen_detection_rate": 0.0,
+    "per_class": {
+      "error_spike": {
+        "precision": 0.5217391304347826,
+        "recall": 1.0,
+        "f1": 0.6857142857142857,
+        "support": 12
+      },
+      "intermittent": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 13
+      },
+      "memory_leak": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 13
+      },
+      "normal": {
+        "precision": 0.7115384615384616,
+        "recall": 1.0,
+        "f1": 0.8314606741573034,
+        "support": 37
+      },
+      "slow": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 3
+      }
+    }
+  }
+}
