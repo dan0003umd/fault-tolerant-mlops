@@ -4,6 +4,10 @@ services:
     container_name: ftmlops-app
     ports:
       - "8000:8000"
+    networks:
+      default:
+        aliases:
+          - app-alt
 
   prometheus:
     image: prom/prometheus:latest
@@ -22,3 +26,37 @@ services:
       - "3000:3000"
     depends_on:
       - prometheus
+
+  zsl:
+    build: ./zsl_module
+    container_name: ftmlops-zsl
+    ports:
+      - "8001:8001"
+    environment:
+      - APP_URL=http://app:8000
+      - MONITOR_INTERVAL=10
+      - AUTO_START_MONITOR=true
+    depends_on:
+      - app
+    profiles:
+      - recovery
+
+  self-healing-controller:
+    build: ./self_healing_controller
+    container_name: ftmlops-self-healing-controller
+    ports:
+      - "8100:8100"
+    environment:
+      - APP_URL=http://app:8000
+      - ZSL_URL=http://zsl:8001
+      - MANAGED_CONTAINER=ftmlops-app
+      - APP_TARGETS=http://app:8000,http://app-alt:8000
+      - POLL_INTERVAL_SEC=10
+      - ACTION_COOLDOWN_SEC=30
+      - MAX_ACTIONS_PER_INCIDENT=3
+      - AUTO_START_MONITOR=true
+    depends_on:
+      - app
+      - zsl
+    profiles:
+      - recovery

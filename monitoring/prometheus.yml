@@ -10,3 +10,8 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: ["app:8000"]
+
+  - job_name: "self-healing-controller"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["self-healing-controller:8100"]

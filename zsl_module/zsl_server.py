@@ -28,6 +28,7 @@ import json
 import time
 import asyncio
 import logging
+import os
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -68,8 +69,10 @@ MONITOR_TASK = None
 MONITOR_RUNNING = False
 REQUEST_BUFFER = deque(maxlen=500)  # buffer of raw requests for windowing
 APP_URL = "http://localhost:8000"
-MONITOR_INTERVAL = 10  # seconds between classifications
+MONITOR_INTERVAL = int(os.getenv("MONITOR_INTERVAL", "10"))  # seconds between classifications
 LOG_FILE = "zsl_classifications.log"
+AUTO_START_MONITOR = os.getenv("AUTO_START_MONITOR", "false").lower() == "true"
+APP_URL = os.getenv("APP_URL", APP_URL)
 
 
 # ---- Request/Response models ----
@@ -304,9 +307,14 @@ async def monitor_loop():
 # ---- API Endpoints ----
 
 @app.on_event("startup")
-def startup():
+async def startup():
+    global MONITOR_RUNNING, MONITOR_TASK
     load_model()
     logger.info("ZSL Fault Diagnosis Server ready")
+    if AUTO_START_MONITOR and not MONITOR_RUNNING:
+        MONITOR_RUNNING = True
+        MONITOR_TASK = asyncio.create_task(monitor_loop())
+        logger.info("ZSL monitor auto-started")
 
 
 @app.get("/status")

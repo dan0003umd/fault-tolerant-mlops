@@ -480,3 +480,51 @@ docker compose up -d --build
 
 &#x20; - Or hit the live EC2 endpoints (if their IP is allowed in the security group).
 
+
+---
+
+## Self-healing controller (Soumitra scope)
+
+A new `self_healing_controller/` service is included to implement:
+
+- policy-based recovery from ZSL fault classifications
+- remedial actions: container restart, traffic reroute, load shedding
+- incident tracking with MTTR and availability-impact metrics
+
+### Run with recovery profile
+
+- `docker compose --profile recovery up -d --build`
+
+This starts:
+- app (`8000`)
+- Prometheus (`9090`)
+- Grafana (`3000`)
+- ZSL server (`8001`)
+- self-healing controller (`8100`)
+
+### Run without recovery profile
+
+- `docker compose up -d --build`
+
+This starts only app/Prometheus/Grafana (no ZSL/controller).
+
+### Controller endpoints
+
+- `GET /health` - liveness
+- `GET /status` - controller state and config
+- `POST /start_monitor` - start recovery monitor loop
+- `POST /stop_monitor` - stop recovery monitor loop
+- `POST /trigger_once` - run one recovery cycle
+- `GET /policy` and `PUT /policy` - view/update recovery policies
+- `POST /recover` - manual recovery for a specified fault
+- `POST /load_shed` - manually enable temporary load shedding
+- `POST /reroute` - manually switch target endpoint
+- `GET /incidents` - active/resolved incidents
+- `GET /summary` - MTTR and availability summary
+- `GET /metrics` - Prometheus metrics for the controller
+- `POST /predict` - optional proxy endpoint with load shedding/reroute behavior
+
+### Important demo note: load shedding path
+
+Load shedding is enforced by the controller proxy (`POST /predict` on port `8100`).
+Direct requests to app (`POST /predict` on port `8000`) bypass controller policies.
