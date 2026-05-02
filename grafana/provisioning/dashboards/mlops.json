@@ -1,0 +1,21 @@
+{
+  "title": "ZSL MLOps — Self-Healing Pipeline",
+  "uid": "zsl-mlops-v2",
+  "schemaVersion": 38,
+  "refresh": "10s",
+  "time": {"from": "now-1h", "to": "now"},
+  "panels": [
+    {"id": 1, "type": "timeseries", "title": "Request Rate (req/s)", "gridPos": {"x": 0, "y": 0, "w": 6, "h": 8}, "targets": [{"expr": "rate(app_requests_total{endpoint=\"/predict\"}[1m])", "legendFormat": "req/s"}]},
+    {"id": 2, "type": "timeseries", "title": "P95 Latency (s)", "gridPos": {"x": 6, "y": 0, "w": 6, "h": 8}, "targets": [{"expr": "histogram_quantile(0.95, rate(app_request_latency_seconds_bucket{endpoint=\"/predict\"}[1m]))", "legendFormat": "p95"}]},
+    {"id": 3, "type": "timeseries", "title": "Error Rate", "gridPos": {"x": 12, "y": 0, "w": 6, "h": 8}, "targets": [{"expr": "rate(app_prediction_errors_total[1m]) / (rate(app_requests_total{endpoint=\"/predict\"}[1m]) + 0.001)", "legendFormat": "error rate"}]},
+    {"id": 4, "type": "timeseries", "title": "ZSL Confidence", "gridPos": {"x": 18, "y": 0, "w": 6, "h": 8}, "targets": [{"expr": "zsl_last_confidence", "legendFormat": "confidence"}]},
+    {"id": 5, "type": "timeseries", "title": "UNSEEN Streak", "gridPos": {"x": 0, "y": 8, "w": 6, "h": 8}, "targets": [{"expr": "zsl_unseen_streak", "legendFormat": "streak"}]},
+    {"id": 6, "type": "timeseries", "title": "Controller MTTR (s)", "gridPos": {"x": 6, "y": 8, "w": 6, "h": 8}, "targets": [{"expr": "controller_last_mttr_seconds", "legendFormat": "MTTR"}]},
+    {"id": 7, "type": "timeseries", "title": "Availability %", "gridPos": {"x": 12, "y": 8, "w": 6, "h": 8}, "targets": [{"expr": "controller_availability * 100", "legendFormat": "availability %"}]},
+    {"id": 8, "type": "timeseries", "title": "Active Incident", "gridPos": {"x": 18, "y": 8, "w": 6, "h": 8}, "targets": [{"expr": "controller_active_incident", "legendFormat": "active"}]},
+    {"id": 9, "type": "stat", "title": "Total UNSEEN Detections", "gridPos": {"x": 0, "y": 16, "w": 6, "h": 4}, "targets": [{"expr": "zsl_unseen_total", "legendFormat": ""}], "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}},
+    {"id": 10, "type": "stat", "title": "Closed Incidents", "gridPos": {"x": 6, "y": 16, "w": 6, "h": 4}, "targets": [{"expr": "controller_incidents_closed_total", "legendFormat": ""}], "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}},
+    {"id": 11, "type": "stat", "title": "ZSL Classify Latency P95 (s)", "gridPos": {"x": 12, "y": 16, "w": 6, "h": 4}, "targets": [{"expr": "histogram_quantile(0.95, rate(zsl_detection_latency_seconds_bucket[5m]))", "legendFormat": ""}], "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}},
+    {"id": 12, "type": "stat", "title": "Availability %", "gridPos": {"x": 18, "y": 16, "w": 6, "h": 4}, "targets": [{"expr": "controller_availability * 100", "legendFormat": ""}], "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}}
+  ]
+}

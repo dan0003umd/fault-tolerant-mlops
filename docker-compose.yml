@@ -1,0 +1,80 @@
+services:
+
+  mlapp:
+    build: ./app
+    container_name: ftmlops-app
+    ports: ["8000:8000"]
+    networks: [ftmlops]
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: ftmlops-prometheus
+    ports: ["9090:9090"]
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=7d"
+    networks: [ftmlops]
+    restart: unless-stopped
+    depends_on: [cadvisor]
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: ftmlops-grafana
+    ports: ["3000:3000"]
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+    networks: [ftmlops]
+    restart: unless-stopped
+    depends_on: [prometheus]
+
+  zsl:
+    build: ./zsl_module
+    container_name: ftmlops-zsl
+    ports: ["8001:8001"]
+    environment:
+      - PROMETHEUS_URL=http://prometheus:9090
+      - ETL_INTERVAL=10
+    networks: [ftmlops]
+    restart: unless-stopped
+    depends_on: [prometheus]
+
+  controller:
+    build: ./controller
+    container_name: ftmlops-controller
+    command: python controller.py
+    ports:
+      - "8002:8002"
+    depends_on:
+      - zsl
+    environment:
+      - ZSL_URL=http://zsl:8001
+      - POLL_INTERVAL=5
+    networks: [ftmlops]
+    restart: unless-stopped
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: ftmlops-cadvisor
+    ports: ["8080:8080"]
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    networks: [ftmlops]
+    restart: unless-stopped
+
+networks:
+  ftmlops:
+    driver: bridge

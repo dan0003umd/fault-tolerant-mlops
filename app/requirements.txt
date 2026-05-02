@@ -1,0 +1,5 @@
+fastapi==0.115.0
+uvicorn==0.30.0
+scikit-learn==1.5.2
+numpy>=1.24
+prometheus-client==0.20.0

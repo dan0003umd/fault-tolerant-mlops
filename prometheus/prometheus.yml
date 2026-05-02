@@ -1,0 +1,24 @@
+global:
+  scrape_interval:     5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: mlapp
+    static_configs:
+      - targets: ['mlapp:8000']
+    metrics_path: /metrics
+
+  - job_name: zsl
+    static_configs:
+      - targets: ['zsl:8001']
+    metrics_path: /metrics
+
+  - job_name: controller
+    static_configs:
+      - targets: ['controller:8002']
+    metrics_path: /metrics
+
+  - job_name: cadvisor
+    static_configs:
+      - targets: ['cadvisor:8080']
+    metrics_path: /metrics
