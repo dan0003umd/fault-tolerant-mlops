@@ -380,11 +380,6 @@ Pull requests welcome! Key areas for improvement:
 
 ***
 
-## 📄 License
-
-MIT License — see [LICENSE](LICENSE) for details.
-
-***
 
 <div align="center">
 
