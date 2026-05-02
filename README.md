@@ -4,12 +4,11 @@
 
 ### Zero-Shot Learning · Self-Healing · Real-Time Observability
 
-[
-[
-[
-[
-[
-[
+
+
+
+
+
 
 ***
 
@@ -32,7 +31,7 @@
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         Traffic Layer                               │
-│   load_gen.py  ──►  FastAPI App (port 8000)  ──►  /predict         │
+│   load_gen.py  ──►  FastAPI App (port 8000)  ──►  /predict          │
 │                         │                                           │
 │                         ▼                                           │
 │              app_requests_total (Counter)                           │
@@ -44,7 +43,7 @@
 ┌─────────────────────────────────────────────────────────────────────┐
 │                      Observability Layer                            │
 │                                                                     │
-│   Prometheus (port 9090)  ◄──  scrapes /metrics every 5s           │
+│   Prometheus (port 9090)  ◄──  scrapes /metrics every 5s            │
 │         │                      from app + zsl + cadvisor            │
 │         │                                                           │
 │         ▼                                                           │
@@ -61,7 +60,7 @@
 │   ├── Normalizes via fitted StandardScaler                          │
 │   ├── Embeds via MLP Encoder → 16-dim embedding space               │
 │   ├── Cosine similarity vs class centroids                          │
-│   └── Labels: normal / error_spike / slow / UNSEEN                 │
+│   └── Labels: normal / error_spike / slow / UNSEEN                  │
 │                                                                     │
 │   MTTR Tracker                                                      │
 │   ├── Records fault onset timestamp                                 │
@@ -73,7 +72,7 @@
 ┌─────────────────────────────────────────────────────────────────────┐
 │                    Controller Layer (port 8002)                     │
 │                                                                     │
-│   Polls ZSL /incidents + /health every 5s                          │
+│   Polls ZSL /incidents + /health every 5s                           │
 │   Exposes:                                                          │
 │   ├── controller_last_mttr_seconds                                  │
 │   ├── controller_availability                                       │
@@ -85,7 +84,7 @@
 ┌─────────────────────────────────────────────────────────────────────┐
 │                      Visualization Layer                            │
 │                                                                     │
-│   Grafana (port 3000)  ──►  ZSL MLOps Dashboard                    │
+│   Grafana (port 3000)  ──►  ZSL MLOps Dashboard                     │
 │   ├── Request Rate & P95 Latency (real-time)                        │
 │   ├── ZSL Confidence + UNSEEN Streak                                │
 │   ├── Controller MTTR + Availability %                              │
